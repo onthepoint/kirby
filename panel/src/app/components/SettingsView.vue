@@ -8,45 +8,11 @@
         {{ $t('view.settings') }}
       </k-header>
 
-      <section class="k-system-info mb-12">
-        <header class="mb-3">
-          <k-headline>Kirby</k-headline>
-        </header>
-
-        <ul class="k-system-info-box bg-white p-3 flex items-center shadow rounded-sm">
-          <li>
-            <dl>
-              <dt class="text-sm text-gray mb-2">{{ $t('license') }}</dt>
-              <dd>
-                <template v-if="license">
-                  {{ license }}
-                </template>
-                <button
-                  v-else
-                  class="k-system-unregistered text-red font-bold"
-                  type="button"
-                  @click="$refs.registrationDialog.open()"
-                >
-                  {{ $t('license.unregistered') }}
-              </button>
-              </dd>
-            </dl>
-          </li>
-          <li>
-            <dl>
-              <dt class="text-sm text-gray mb-2">{{ $t('version') }}</dt>
-              <dd>{{ version }}</dd>
-            </dl>
-          </li>
-        </ul>
-      </section>
+      <!-- system -->
+      <k-system v-bind="$props" @update="$emit('update')" />
 
       <!-- languages -->
       <k-languages v-if="multilang" />
-
-      <!-- dialogs -->
-      <k-registration-dialog ref="registrationDialog" />
-
     </k-view>
   </k-inside>
 </template>
@@ -56,18 +22,8 @@ export default {
   props: {
     license: String,
     multilang: Boolean,
-    version: String
-  },
+    update: [Object, Boolean],
+    version: String,
+  }
 };
 </script>
-
-<style>
-.k-system-info-box li {
-  flex-shrink: 0;
-  flex-grow: 1;
-  flex-basis: 0;
-}
-.k-system-unregistered:focus {
-  outline: none;
-}
-</style>
