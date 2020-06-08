@@ -1,6 +1,7 @@
 <template>
   <k-link
     :id="id"
+    :accesskey="accesskey"
     :aria-current="current"
     :autofocus="autofocus"
     :data-theme="theme"
@@ -16,8 +17,7 @@
   >
     <k-icon
       v-if="icon"
-      :type="icon"
-      :alt="tooltip"
+      v-bind="iconOptions"
       class="k-button-icon"
     />
     <span
@@ -32,9 +32,10 @@
 export default {
   inheritAttrs: false,
   props: {
+    accesskey: String,
     autofocus: Boolean,
     current: [String, Boolean],
-    icon: String,
+    icon: [String, Object],
     id: [String, Number],
     link: String,
     rel: String,
@@ -44,6 +45,21 @@ export default {
     tabindex: String,
     theme: String,
     tooltip: String,
+  },
+  computed: {
+    iconOptions() {
+      if (typeof this.icon === "object") {
+        return {
+          ...this.icon,
+          alt: this.tooltip
+        };
+      }
+
+      return {
+        type: this.icon,
+        alt: this.tooltip
+      };
+    }
   }
 };
 </script>

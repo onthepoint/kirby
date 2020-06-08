@@ -1,21 +1,33 @@
 <?php
 
+use Kirby\Data\Data;
 use Kirby\Toolkit\I18n;
 
 return [
     'props' => [
         /**
-         * The placeholder text if none have been selected yet
+         * Unset inherited props
          */
-        'empty' => function ($empty = null) {
-            return I18n::translate($empty, $empty);
+        'after'       => null,
+        'before'      => null,
+        'autofocus'   => null,
+        'icon'        => null,
+        'placeholder' => null,
+
+        /**
+         * Sets the model(s), which are selected by default
+         * when a new page/file/user is created
+         */
+        'default' => function ($default = []) {
+            return $default;
         },
 
         /**
-         * Image settings for each item
+         * The placeholder text/icon if none have been selected yet
          */
-        'image' => function ($image = null) {
-            return $image;
+        'empty' => function ($empty = null) {
+            // TODO: handle cases where defined as text-icon array
+            return I18n::translate($empty, $empty);
         },
 
         /**
@@ -26,9 +38,19 @@ return [
         },
 
         /**
+         * Changes the layout of the selected files.
+         * Available layouts: `list`, `cards`
+         */
+        'layout' => function (string $layout = 'list') {
+            return $layout;
+        },
+
+        /**
          * Whether each item should be clickable
          */
         'link' => function (bool $link = true) {
+            // TODO: the default value somehow gets ignored/
+            // not passed to Vue component
             return $link;
         },
 
@@ -68,11 +90,59 @@ return [
         },
 
         /**
+         * Layout size for cards: `tiny`, `small`, `medium`, `large` or `huge`
+         */
+        'size' => function (string $size = 'auto') {
+            return $size;
+        },
+
+        /**
          * Main text for each item
          */
         'text' => function (string $text = null) {
             return $text;
         },
 
+        'value' => function ($value = []) {
+            return $value;
+        }
     ],
+    'computed' => [
+        'default' => function (): array {
+            return $this->toValue($this->default);
+        },
+        'value' => function (): array {
+            return $this->toValue($this->value);
+        },
+    ],
+    'methods' => [
+        'modelResponse' => function ($model): array {
+            return $model->panelPickerData([
+                'info'    => $this->info ?? false,
+                'model'   => $this->model(),
+                'preview' => $this->preview,
+                'text'    => $this->text,
+            ]);
+        },
+        'toModels' => function (array $ids = []): array {
+            $models = array_map(function ($id) {
+                if ($model = $this->toModel($id)) {
+                    return $this->modelResponse($model);
+                }
+            }, $ids);
+            $models = array_filter($models);
+            return $models;
+        },
+        'toValue' => function ($value): array {
+            if (is_array($value) === true) {
+                return $value;
+            }
+
+            return Data::decode($value, 'yaml');
+        }
+    ],
+    'validations' => [
+        'max',
+        'min'
+    ]
 ];

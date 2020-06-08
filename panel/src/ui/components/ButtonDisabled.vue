@@ -4,13 +4,12 @@
     :data-disabled="true"
     :data-responsive="responsive"
     :data-theme="theme"
-    :title="tooltip"
-    class="k-button"
+    :title="tooltip || text"
+    class="k-button cursor-default"
   >
     <k-icon
       v-if="icon"
-      :type="icon"
-      :alt="tooltip"
+      v-bind="iconOptions"
       class="k-button-icon"
     />
     <span
@@ -21,28 +20,16 @@
 </template>
 
 <script>
+import ButtonNative from "./ButtonNative.vue";
+
 export default {
+  extends: ButtonNative,
   inheritAttrs: false,
-  props: {
-    icon: String,
-    id: [String, Number],
-    responsive: Boolean,
-    theme: String,
-    tooltip: String,
-  }
 };
 </script>
 
 <style lang="scss">
 .k-button[data-disabled] {
   opacity: 0.5;
-  cursor: default;
-}
-.k-card-options > .k-button[data-disabled] {
-  display: inline-flex;
-}
-.k-button[data-disabled]:focus .k-button-text,
-.k-button[data-disabled]:hover .k-button-text {
-  opacity: 0.75;
 }
 </style>

@@ -1,72 +1,38 @@
 <template>
   <nav
     v-if="show"
-    :data-align="align"
     class="k-pagination"
   >
     <k-button
       v-if="show"
       :disabled="!hasPrev"
+      :icon="direction === 'horizontal' ? 'angle-left' : 'angle-up'"
       :tooltip="prevLabel"
-      icon="angle-left"
+      class="k-pagination-button"
       @click="prev"
     />
-
     <template v-if="details">
       <template v-if="dropdown">
-        <k-dropdown>
-          <k-button
-            :disabled="!hasPages"
-            class="k-pagination-details"
-            @click="$refs.dropdown.toggle()"
-          >
-            <template v-if="total > 1">
-              {{ detailsText }}
-            </template>{{ total }}
-          </k-button>
-
-          <k-dropdown-content
-            ref="dropdown"
-            class="k-pagination-selector"
-            @open="$nextTick(() => $refs.page.focus())"
-          >
-            <div class="k-pagination-settings">
-              <label for="k-pagination-page">
-                <span>{{ pageLabel }}:</span>
-                <select
-                  id="k-pagination-page"
-                  ref="page"
-                >
-                  <option
-                    v-for="p in pages"
-                    :key="p"
-                    :selected="page === p"
-                    :value="p"
-                  >
-                    {{ p }}
-                  </option>
-                </select>
-              </label>
-              <k-button
-                icon="check"
-                @click="goTo($refs.page.value)"
-              />
-            </div>
-          </k-dropdown-content>
-        </k-dropdown>
+        <k-page-dropdown
+          :page="currentPage"
+          :page-label="pageLabel"
+          :pages="pages"
+          :text="detailsText"
+          class="k-pagination-details"
+          @change="goTo($event)"
+        />
       </template>
       <template v-else>
-        <span class="k-pagination-details">
-          <template v-if="total > 1">{{ detailsText }}</template>{{ total }}
-        </span>
+        <span class="k-pagination-details text-sm">{{ detailsText }}</span>
       </template>
     </template>
 
     <k-button
       v-if="show"
       :disabled="!hasNext"
+      :icon="direction === 'horizontal' ? 'angle-right' : 'angle-down'"
       :tooltip="nextLabel"
-      icon="angle-right"
+      class="k-pagination-button"
       @click="next"
     />
   </nav>
@@ -75,13 +41,21 @@
 <script>
 export default {
   props: {
-    align: {
-      type: String,
-      default: "left"
-    },
+    /**
+     * Show/hide the details display with the page selector
+     * in the center of the two navigation buttons.
+     */
     details: {
       type: Boolean,
       default: false
+    },
+    /**
+     * Define whether the arrows point left-right or up-down.
+     * Available options: `horizontal`|`vertical`
+     */
+    direction: {
+      type: String,
+      default: "horizontal"
     },
     dropdown: {
       type: Boolean,
@@ -93,34 +67,56 @@ export default {
         return Promise.resolve();
       }
     },
+    /**
+     * Sets the current page
+     */
     page: {
       type: Number,
       default: 1
     },
+    /**
+     * Sets the total number of items that are in the paginated list.
+     * This has to be set higher than `0` to activate pagination.
+     */
     total: {
       type: Number,
       default: 0
     },
+    /**
+     * Sets the limit of items to be shown per page.
+     */
     limit: {
       type: Number,
       default: 10
     },
+    /**
+     * Enable/disable keyboard navigation
+     */
     keys: {
       type: Boolean,
       default: false
     },
+    /**
+     * Sets the label for the page selector
+     */
     pageLabel: {
       type: String,
       default() {
         return this.$t("pagination.page");
       }
     },
+    /**
+     * Sets the label for the `prev` arrow button
+     */
     prevLabel: {
       type: String,
       default() {
         return this.$t("prev");
       }
     },
+    /**
+     * Sets the label for the `next` arrow button
+     */
     nextLabel: {
       type: String,
       default() {
@@ -135,7 +131,7 @@ export default {
   },
   computed: {
     show() {
-      return this.pages > 1;
+      return this.limit > 0 && this.pages > 1;
     },
     start() {
       return (this.currentPage - 1) * this.limit + 1;
@@ -150,11 +146,15 @@ export default {
       }
     },
     detailsText() {
-      if (this.limit === 1) {
-        return this.start + " / ";
-      } else {
-        return this.start + "-" + this.end + " / ";
+      if (this.total <= 1) {
+        return this.total;
       }
+
+      if (this.limit === 1) {
+        return this.start + " / " + this.total;
+      }
+
+      return this.start + "-" + this.end + " / " + this.total;
     },
     pages() {
       return Math.ceil(this.total / this.limit);
@@ -186,34 +186,37 @@ export default {
     window.removeEventListener("keydown", this.navigate, false);
   },
   methods: {
-    goTo(page) {
-      this.validate(page)
-        .then(() => {
-          if (page < 1) {
-            page = 1;
-          }
+    async goTo(page) {
+      try {
+        await this.validate(page);
 
-          if (page > this.pages) {
-            page = this.pages;
-          }
+        if (page < 1) {
+          page = 1;
+        }
 
-          this.currentPage = page;
+        if (page > this.pages) {
+          page = this.pages;
+        }
 
-          if (this.$refs.dropdown) {
-            this.$refs.dropdown.close();
-          }
+        this.currentPage = page;
 
-          this.$emit("paginate", {
-            page: this.currentPage,
-            start: this.start,
-            end: this.end,
-            limit: this.limit,
-            offset: this.offset
-          });
-        })
-        .catch(() => {
-          // pagination stopped
+        /**
+         * Listening to the paginate event is the most straight
+         * forward way to react to the pagination component. An object
+         * with `page`, `start`, `end`, `limit` and `offset` items
+         * is passed.
+         */
+        this.$emit("paginate", {
+          page: this.currentPage,
+          start: this.start,
+          end: this.end,
+          limit: this.limit,
+          offset: this.offset
         });
+
+      } catch (error) {
+        // pagination stopped
+      }
     },
     prev() {
       this.goTo(this.currentPage - 1);
@@ -224,11 +227,9 @@ export default {
     navigate(e) {
       switch (e.code) {
         case "ArrowLeft":
-          this.prev();
-          break;
+          return this.prev();
         case "ArrowRight":
-          this.next();
-          break;
+          return this.next();
       }
     }
   }
@@ -237,57 +238,27 @@ export default {
 
 <style lang="scss">
 .k-pagination {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
   user-select: none;
-  direction: ltr;
-}
-.k-pagination .k-button {
-  padding: 1rem;
 }
 .k-pagination-details {
   white-space: nowrap;
-}
-.k-pagination > span {
-  font-size: $font-size-small;
-}
-.k-pagination[data-align="center"] {
-  text-align: center;
-}
-.k-pagination[data-align="right"] {
-  text-align: right;
-}
-
-.k-dropdown-content.k-pagination-selector {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: $color-black;
-
-  [dir="ltr"] & {
-    direction: ltr;
-  }
-
-  [dir="rtl"] & {
-    direction: rtl;
-  }
-}
-
-.k-pagination-settings {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-.k-pagination-settings .k-button {
+  height: 2.5rem;
   line-height: 1;
 }
-.k-pagination-settings label {
-  display: flex;
-  border-right: 1px solid rgba(#fff, .35);
-  align-items: center;
-  padding: .625rem 1rem;
-  font-size: $font-size-tiny;
+.k-pagination-details .k-page-dropdown-toggle {
+  height: 2.5rem;
+  padding: 0 .5rem;
 }
-.k-pagination-settings label span {
-  margin-right: .5rem;
+.k-pagination-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  width: 2.5rem;
 }
 </style>

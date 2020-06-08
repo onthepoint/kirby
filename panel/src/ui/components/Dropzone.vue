@@ -2,7 +2,7 @@
   <div
     :data-dragging="dragging"
     :data-over="over"
-    class="k-dropzone"
+    class="k-dropzone relative"
     @dragenter="onEnter"
     @dragleave="onLeave"
     @dragover="onOver"
@@ -15,6 +15,9 @@
 <script>
 export default {
   props: {
+    /**
+     * You can deactivate the dropzone with this prop
+     */
     disabled: {
       type: Boolean,
       default: false
@@ -47,6 +50,12 @@ export default {
       this.$events.$emit("dropzone.drop");
 
       this.files = $event.dataTransfer.files;
+
+      /**
+       * The drop event is triggered when files are being dropped into
+       * the dropzone. The event receives the files list as argument,
+       * which can then be used to start an upload for example.
+       */
       this.$emit("drop", this.files);
       this.reset();
     },
@@ -69,9 +78,6 @@ export default {
 </script>
 
 <style lang="scss">
-.k-dropzone {
-  position: relative;
-}
 .k-dropzone::after {
   content: "";
   position: absolute;
@@ -88,5 +94,4 @@ export default {
   outline: 1px solid $color-focus;
   box-shadow: $color-focus-outline 0 0 0 3px;
 }
-
 </style>

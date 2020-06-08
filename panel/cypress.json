@@ -1,7 +1,20 @@
 {
-  "supportFile": "tests/e2e/config/support.js",
-  "pluginsFile": "tests/e2e/config/plugins.js",
-  "fixturesFolder": "tests/e2e/fixtures",
-  "integrationFolder": "tests/e2e/specs",
-  "projectId": "k9a41h"
+  "baseUrl": "http://localhost:6006",
+  "supportFile": "cypress/support.js",
+  "pluginsFile": "cypress/plugins.js",
+  "integrationFolder": "src",
+  "testFiles": "**/*.test.js",
+  "ignoreTestFiles": [
+    "**/__snapshots__/*",
+    "**/__image_snapshots__/*"
+  ],
+  "video": false,
+  "env": {
+    "cypress-plugin-snapshots": {
+      "autoCleanUp": true,
+      "imageConfig": {
+        "threshold": 0.05
+      }
+    }
+  }
 }

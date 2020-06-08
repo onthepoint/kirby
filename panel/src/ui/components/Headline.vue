@@ -20,14 +20,31 @@
 
 export default {
   props: {
-    link: String,
+    /**
+     * You can set a link for the headline.
+     * The link can be absolute or relative.
+     */
+    link: {
+      type: [Boolean, String],
+      default: false
+    },
+    /**
+     * Sets the text size.
+     * Available sizes: `tiny`|`small`|`medium`|`large`|`huge`
+     */
     size: {
       type: String
     },
+    /**
+     * Sets the HTML tag for the headline element.
+     */
     tag: {
       type: String,
       default: "h2"
     },
+    /**
+     * Available options: `positive`|`negative`
+     */
     theme: {
       type: String
     }
@@ -37,27 +54,27 @@ export default {
 
 <style lang="scss">
 .k-headline {
-  font-size: $font-size-medium;
-  font-weight: $font-weight-bold;
-  line-height: 1.5em;
+  font-size: $text-base;
+  font-weight: $font-bold;
+  line-height: 1.25em;
 }
 .k-headline[data-size="small"] {
-  font-size: $font-size-small;
+  font-size: $text-sm;
 }
 .k-headline[data-size="large"] {
-  font-size: $font-size-large;
-  font-weight: $font-weight-normal;
+  font-size: $text-xl;
+  font-weight: $font-normal;
 
-  @media screen and (min-width: $breakpoint-medium) {
-    font-size: $font-size-huge;
+  @media screen and (min-width: $breakpoint-md) {
+    font-size: $text-2xl;
   }
 }
 .k-headline[data-size="huge"] {
-  font-size: $font-size-huge;
+  font-size: $text-2xl;
   line-height: 1.15em;
 
-  @media screen and (min-width: $breakpoint-medium) {
-    font-size: $font-size-monster;
+  @media screen and (min-width: $breakpoint-md) {
+    font-size: $text-3xl;
   }
 }
 .k-headline[data-theme="negative"] {
@@ -68,7 +85,7 @@ export default {
 }
 
 .k-headline abbr {
-  color: $color-light-grey;
+  color: $color-gray-500;
   padding-left: .25rem;
   text-decoration: none;
 }

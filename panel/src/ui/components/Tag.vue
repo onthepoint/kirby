@@ -1,27 +1,38 @@
 <template>
   <span
     ref="button"
-    class="k-tag"
+    class="k-tag relative inline-flex items-center justify-between text-sm cursor-pointer bg-black text-white rounded-sm"
     tabindex="0"
     @keydown.delete.prevent="remove"
   >
-    <span class="k-tag-text"><slot /></span>
-    <span
+    <span class="k-tag-text px-3"><slot /></span>
+    <k-button
       v-if="removable"
       class="k-tag-toggle"
+      icon="cancel-small"
       @click="remove"
-    >&times;</span>
+    />
   </span>
 </template>
 
 <script>
 export default {
   props: {
-    removable: Boolean,
+    /**
+     * Enables the remove button.
+     */
+    removable: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     remove() {
       if (this.removable) {
+        /**
+         * This event is emitted when the remove button is being
+         * clicked or the tag is focussed and the delete key is entered.
+         */
         this.$emit("remove");
       }
     },
@@ -34,16 +45,7 @@ export default {
 
 <style lang="scss">
 .k-tag {
-  position: relative;
-  font-size: $font-size-small;
   line-height: 1;
-  cursor: pointer;
-  background-color: $color-dark;
-  color: $color-light;
-  border-radius: $border-radius;
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
   user-select: none;
   height: 1.5rem;
 }
@@ -53,20 +55,10 @@ export default {
   border-color: $color-focus;
   color: #fff;
 }
-.k-tag-text {
-  padding: 0 .75rem;
-}
 .k-tag-toggle {
   color: rgba(255, 255, 255, 0.7);
-  width: 2rem;
+  width: calc(2rem - 1px);
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border-left: 1px solid rgba(255, 255, 255, 0.15);
-}
-.k-tag-toggle:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
 }
 </style>

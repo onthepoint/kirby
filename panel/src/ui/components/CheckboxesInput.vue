@@ -1,0 +1,152 @@
+<template>
+  <ul
+    :style="'--columns:' + columns"
+    class="k-checkboxes-input"
+  >
+    <li
+      v-for="(option, index) in checkboxes"
+      :key="index"
+    >
+      <k-checkbox-input
+        :id="id + '-' + index"
+        :disabled="disabled"
+        :label="option.text"
+        :value="selected.indexOf(option.value) !== -1"
+        @input="onInput(option.value, $event)"
+      />
+    </li>
+  </ul>
+</template>
+
+<script>
+export default {
+  inheritAttrs: false,
+  props: {
+    autofocus: Boolean,
+    columns: Number,
+    disabled: Boolean,
+    id: {
+      type: [Number, String],
+      default() {
+        return this._uid;
+      }
+    },
+    max: Number,
+    min: Number,
+    options: Array,
+    required: Boolean,
+    value: {
+      type: [Array, Object],
+      default() {
+        return [];
+      }
+    }
+  },
+  data() {
+    return {
+      selected: this.valueToArray(this.value)
+    }
+  },
+  computed: {
+    checkboxes() {
+      return this.$helper.input.options(this.options);
+    }
+  },
+  watch: {
+    value(value) {
+      this.selected = this.valueToArray(value);
+    }
+  },
+  mounted() {
+    if (this.$props.autofocus) {
+      this.focus();
+    }
+  },
+  methods: {
+    focus() {
+      this.$el.querySelector("input").focus();
+    },
+    onInput(key, value) {
+      if (value === true) {
+        this.selected.push(key);
+      } else {
+        const index = this.selected.indexOf(key);
+        if (index !== -1) {
+          this.selected.splice(index, 1);
+        }
+      }
+      this.$emit("input", this.selected);
+    },
+    select() {
+      this.focus();
+    },
+    valueToArray(value) {
+      if (Array.isArray(value) === true) {
+        return value;
+      }
+
+      if (typeof value === "string") {
+        return String(value).split(",");
+      }
+
+      if (typeof value === "object") {
+        return Object.values(value);
+      }
+    },
+  }
+}
+</script>
+
+<style lang="scss">
+.k-checkboxes-input {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media screen and (min-width: $breakpoint-md) {
+  .k-checkboxes-input {
+    grid-template-columns: repeat(var(--columns), 1fr);
+  }
+}
+
+/** Theming **/
+.k-input[data-theme="field"][data-type="checkboxes"] {
+  .k-input-before {
+    border-right: 1px solid $color-background;
+  }
+  .k-input-element + .k-input-after,
+  .k-input-element + .k-input-icon {
+    border-left : 1px solid $color-background;
+  }
+  .k-input-element {
+    overflow: hidden;
+  }
+  .k-checkboxes-input {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-bottom: -1px;
+    margin-right: -1px;
+
+    @media screen and (min-width: $breakpoint-md) {
+      grid-template-columns: repeat(var(--columns), 1fr);
+    }
+
+  }
+  .k-checkboxes-input li {
+    border-right: 1px solid $color-background;
+    border-bottom: 1px solid $color-background;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+  .k-checkboxes-input label {
+    display: block;
+    line-height: $field-input-line-height;
+    padding: $field-input-padding;
+  }
+  .k-checkbox-input-icon {
+    top: ($field-input-height - $field-input-font-size) / 2;
+    left: $field-input-padding;
+    margin-top: 0px;
+  }
+}
+</style>

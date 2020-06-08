@@ -621,6 +621,7 @@ trait AppPlugins
             FormField::$mixins['options']    = include static::$root . '/config/fields/mixins/options.php';
             FormField::$mixins['pagepicker'] = include static::$root . '/config/fields/mixins/pagepicker.php';
             FormField::$mixins['picker']     = include static::$root . '/config/fields/mixins/picker.php';
+            FormField::$mixins['preview']   = include static::$root . '/config/fields/mixins/preview.php';
             FormField::$mixins['upload']     = include static::$root . '/config/fields/mixins/upload.php';
             FormField::$mixins['userpicker'] = include static::$root . '/config/fields/mixins/userpicker.php';
 
@@ -661,6 +662,7 @@ trait AppPlugins
             Section::$mixins['min']            = include static::$root . '/config/sections/mixins/min.php';
             Section::$mixins['pagination']     = include static::$root . '/config/sections/mixins/pagination.php';
             Section::$mixins['parent']         = include static::$root . '/config/sections/mixins/parent.php';
+            Section::$mixins['preview']        = include static::$root . '/config/sections/mixins/preview.php';
 
             // section types
             Section::$types['info']            = include static::$root . '/config/sections/info.php';

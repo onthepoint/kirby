@@ -23,16 +23,24 @@
 </template>
 
 <script>
-import tab from "@/ui/mixins/tab.js";
+import tab from "../mixins/tab.js";
 
 export default {
   mixins: [tab],
   props: {
+    /**
+     * Disabled links will have no pointer events and cannot be
+     * clicked or focused.
+     */
     disabled: Boolean,
     rel: String,
     tabindex: [String, Number],
-    target: String,
+    target: [String, Boolean],
     title: String,
+    /**
+     * The path or absolute URL for the link.
+     * Can also be a callback function.
+     */
     to: [String, Function],
   },
   data() {
@@ -102,6 +110,9 @@ export default {
         this.$router.push(this.to);
       }
 
+      /**
+       * The link has been clicked
+       */
       this.$emit("click", event);
     }
   }

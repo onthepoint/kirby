@@ -12,8 +12,20 @@
 <script>
 export default {
   props: {
+    /**
+     * Changes the text alignment.
+     * Available options: `left`|`center`|`right`
+     */
     align: String,
+    /**
+     * Changes the font size of the text.
+     * Available options: `tiny`|`small`|`medium`|`large`|`huge`
+     */
     size: String,
+    /**
+     * Changes the layout/design of the text.
+     * Available options: `help`
+     */
     theme: String
   }
 }
@@ -41,21 +53,21 @@ export default {
 }
 
 .k-text[data-size="tiny"] {
-  font-size: $font-size-tiny;
+  font-size: $text-xs;
 }
 .k-text[data-size="small"] {
-  font-size: $font-size-small;
+  font-size: $text-sm;
 }
 .k-text[data-size="medium"] {
-  font-size: $font-size-medium;
+  font-size: $text-base;
 }
 .k-text[data-size="large"] {
-  font-size: $font-size-large;
+  font-size: $text-xl;
 }
 
 .k-text[data-theme="help"] {
-  font-size: $font-size-small;
-  color: $color-dark-grey;
+  font-size: $text-sm;
+  color: $color-gray-700;
   line-height: 1.25rem;
 }
 

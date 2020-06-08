@@ -1,9 +1,9 @@
-import Draggable from "./Draggable.vue";
 import { action } from "@storybook/addon-actions";
+import Padding from "../../../storybook/theme/Padding.js";
 
 export default {
-  title: "Interaction / Draggable",
-  component: Draggable
+  title: "UI | Interaction / Draggable",
+  decorators: [Padding]
 };
 
 export const simple = () => ({
@@ -12,29 +12,28 @@ export const simple = () => ({
       items: ['A', 'B', 'C', 'D']
     }
   },
-  computed: {
-    styles() {
-      return {
-        background: "white",
-        marginBottom: "2px",
-        padding: ".5rem",
-        cursor: "move"
-      };
-    }
-  },
   methods: {
     start: action("start"),
     end: action("end")
   },
   template: `
     <div>
-      <k-draggable element="ul" :list="items" @start="start" @end="end">
-        <li :style="styles" v-for="item in items">{{ item }}</li>
+      <k-draggable
+        :list="items"
+        class="mb-6"
+        element="ul"
+        @start="start"
+        @end="end"
+      >
+        <li
+          v-for="item in items"
+          class="cursor-grab p-2 bg-white shadow rounded-sm mb-2px"
+        >
+          {{ item }}
+        </li>
       </k-draggable>
 
-      <br>
-
-      Result: {{ items }}
+      <k-code-block :code="items" />
     </div>
   `,
 });
@@ -45,34 +44,29 @@ export const withSortHandle = () => ({
       items: ["A", "B", "C", "D"]
     };
   },
-  computed: {
-    styles() {
-      return {
-        display: "flex",
-        alignItems: "center",
-        background: "white",
-        marginBottom: "2px",
-        padding: ".0625rem 0",
-      };
-    }
-  },
   methods: {
     start: action("start"),
     end: action("end")
   },
   template: `
     <div>
-      <k-draggable element="ul" :handle="true" :list="items" @start="start" @end="end">
-        <li :style="styles" v-for="item in items">
+      <k-draggable
+        :handle="true"
+        :list="items"
+        class="mb-6"
+        element="ul"
+        @start="start"
+        @end="end"
+      >
+        <li
+          v-for="item in items"
+          class="bg-white shadow rounded-sm mb-2px flex items-center"
+        >
           <k-sort-handle />
           {{ item }}
         </li>
       </k-draggable>
-
-      <br>
-
-      Result: {{ items }}
+      <k-code-block :code="items" />
     </div>
   `
 });
-

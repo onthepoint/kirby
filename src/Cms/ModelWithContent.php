@@ -300,82 +300,9 @@ abstract class ModelWithContent extends Model
      * Returns the panel icon definition
      *
      * @internal
-     * @param array $params
-     * @return array
+     * @return array|void
      */
-    public function panelIcon(array $params = null): array
-    {
-        $defaults = [
-            'type'  => 'page',
-            'ratio' => null,
-            'back'  => 'pattern',
-            'color' => '#c5c9c6',
-        ];
-
-        return array_merge($defaults, $params ?? []);
-    }
-
-    /**
-     * @internal
-     * @param string|array|false $settings
-     * @return array|null
-     */
-    public function panelImage($settings = null): ?array
-    {
-        $defaults = [
-            'ratio' => '3/2',
-            'back'  => 'pattern',
-            'cover' => false
-        ];
-
-        // switch the image off
-        if ($settings === false) {
-            return null;
-        }
-
-        if (is_string($settings) === true) {
-            $settings = [
-                'query' => $settings
-            ];
-        }
-
-        if ($image = $this->panelImageSource($settings['query'] ?? null)) {
-
-            // main url
-            $settings['url'] = $image->url();
-
-            // for cards
-            $settings['cards'] = [
-                'url' => 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw',
-                'srcset' => $image->srcset([
-                    352,
-                    864,
-                    1408,
-                ])
-            ];
-
-            // for lists
-            $settings['list'] = [
-                'url' => 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw',
-                'srcset' => $image->srcset([
-                    '1x' => [
-                        'width' => 38,
-                        'height' => 38,
-                        'crop' => 'center'
-                    ],
-                    '2x' => [
-                        'width' => 76,
-                        'height' => 76,
-                        'crop' => 'center'
-                    ],
-                ])
-            ];
-
-            unset($settings['query']);
-        }
-
-        return array_merge($defaults, (array)$settings);
-    }
+    public function panelIcon() {}
 
     /**
      * Returns the image file object based on provided query
@@ -384,21 +311,73 @@ abstract class ModelWithContent extends Model
      * @param string|null $query
      * @return \Kirby\Cms\File|\Kirby\Cms\Asset|null
      */
-    protected function panelImageSource(string $query = null)
+    protected function panelImage(string $query = null)
     {
         $image = $this->query($query ?? null);
 
         // validate the query result
-        if (is_a($image, 'Kirby\Cms\File') === false && is_a($image, 'Kirby\Cms\Asset') === false) {
+        if (
+            is_a($image, 'Kirby\Cms\File') === false &&
+            is_a($image, 'Kirby\Cms\Asset') === false
+        ) {
             $image = null;
         }
 
         // fallback for files
-        if ($image === null && is_a($this, 'Kirby\Cms\File') === true && $this->isViewable() === true) {
+        if (
+            $image === null &&
+            is_a($this, 'Kirby\Cms\File') === true &&
+            $this->isViewable() === true
+        ) {
             $image = $this;
         }
 
         return $image;
+    }
+
+    /**
+     * @internal
+     * @param string|array|false $settings
+     * @return array|false
+     */
+    public function panelPreview($settings = [])
+    {
+        $defaults = [
+            'ratio' => '3/2',
+            'back'  => 'pattern',
+            'cover' => false,
+        ];
+
+        // switch the preview off
+        if ($settings === false) {
+            return false;
+        }
+
+        if (is_string($settings) === true) {
+            $settings = [
+                'query' => $settings
+            ];
+        }
+
+        if ($image = $this->panelImage($settings['query'] ?? null)) {
+            $settings['image'] = [
+                'src'    => $image->url(),
+                'srcset' => $image->srcset([
+                    352,
+                    864,
+                    1408,
+                ])
+            ];
+
+            unset($settings['query']);
+        }
+
+        if ($icon = $this->panelIcon()) {
+            $settings['icon'] = $icon['type'] ?? 'page';
+            $settings['color'] = $icon['color'] ?? 'gray-light';
+        }
+
+        return array_merge($defaults, (array)$settings);
     }
 
     /**

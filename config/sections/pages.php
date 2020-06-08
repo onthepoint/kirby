@@ -13,7 +13,8 @@ return [
         'min',
         'max',
         'pagination',
-        'parent'
+        'parent',
+        'preview'
     ],
     'props' => [
         /**
@@ -28,12 +29,6 @@ return [
          */
         'flip' => function (bool $flip = false) {
             return $flip;
-        },
-        /**
-         * Image options to control the source and look of page previews
-         */
-        'image' => function ($image = null) {
-            return $image ?? [];
         },
         /**
          * Optional info text setup. Info text is shown on the right (lists) or below (cards) the page title.
@@ -118,7 +113,10 @@ return [
                 }
 
                 // filter by all set templates
-                if ($this->templates && in_array($page->intendedTemplate()->name(), $this->templates) === false) {
+                if (
+                    $this->templates &&
+                    in_array($page->intendedTemplate()->name(), $this->templates) === false
+                ) {
                     unset($pages->data[$id]);
                     continue;
                 }
@@ -148,20 +146,18 @@ return [
         'data' => function () {
             $data = [];
 
-            foreach ($this->pages as $item) {
-                $permissions = $item->permissions();
-                $image       = $item->panelImage($this->image);
+            foreach ($this->pages as $page) {
+                $permissions = $page->permissions();
 
                 $data[] = [
-                    'id'          => $item->id(),
-                    'dragText'    => $item->dragText(),
-                    'text'        => $item->toString($this->text),
-                    'info'        => $item->toString($this->info ?? false),
-                    'parent'      => $item->parentId(),
-                    'icon'        => $item->panelIcon($image),
-                    'image'       => $image,
-                    'link'        => $item->panelUrl(true),
-                    'status'      => $item->status(),
+                    'id'          => $page->id(),
+                    'dragText'    => $page->dragText(),
+                    'text'        => $page->toString($this->text),
+                    'info'        => $this->info ? $page->toString($this->info) : false,
+                    'parent'      => $page->parentId(),
+                    'preview'     => $page->panelPreview($this->preview()),
+                    'link'        => $page->panelUrl(true),
+                    'status'      => $page->status(),
                     'permissions' => [
                         'sort'         => $permissions->can('sort'),
                         'changeStatus' => $permissions->can('changeStatus')
@@ -288,6 +284,7 @@ return [
                 'link'     => $this->link,
                 'max'      => $this->max,
                 'min'      => $this->min,
+                'preview'  => $this->preview(),
                 'size'     => $this->size,
                 'sortable' => $this->sortable
             ],

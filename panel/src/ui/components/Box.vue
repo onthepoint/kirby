@@ -1,9 +1,10 @@
 <template>
   <div
     :data-theme="theme"
-    class="k-box"
+    class="k-box text-sm"
     v-on="$listeners"
   >
+    <!-- @slot Fill the box with custom content instead of text -->
     <slot>
       <k-text v-html="text" />
     </slot>
@@ -13,7 +14,13 @@
 <script>
 export default {
   props: {
+    /**
+     * `positive`|`negative`|`info`|`none`
+     */
     theme: String,
+    /**
+     * Text to display in the box
+     */
     text: String
   }
 };
@@ -22,22 +29,21 @@ export default {
 <style lang="scss">
 .k-box {
   word-wrap: break-word;
-  font-size: $font-size-small;
 }
 .k-box:not([data-theme="none"]) {
-  background: lighten($color-light-grey, 25%);
-  border-radius: $border-radius;
+  background: lighten($color-gray-500, 25%);
+  border-radius: $rounded-sm;
   padding: 0.375rem 0.75rem;
   line-height: 1.25rem;
-  border-left: 2px solid $color-light-grey;
+  border-left: 2px solid $color-gray-500;
   padding: 0.5rem 1.5rem;
 }
 .k-box[data-theme="code"] {
-  background: $color-dark;
+  background: $color-black;
   border: 1px solid $color-black;
   color: $color-light;
   font-family: "Input", "Menlo", monospace;
-  font-size: $font-size-small;
+  font-size: $text-sm;
   line-height: 1.5;
 }
 .k-box[data-theme="button"] {
@@ -87,15 +93,15 @@ export default {
   align-items: center;
   flex-direction: column;
   background: $color-background;
-  border-radius: $border-radius;
-  color: $color-dark-grey;
+  border-radius: $rounded-sm;
+  color: $color-gray-700;
   border: 1px dashed $color-border;
 }
 .k-box[data-theme="empty"] .k-icon {
   margin-bottom: 0.5rem;
-  color: $color-light-grey;
+  color: $color-gray-500;
 }
 .k-box[data-theme="empty"] p {
-  color: $color-dark-grey;
+  color: $color-gray-700;
 }
 </style>

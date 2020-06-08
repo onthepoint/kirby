@@ -1,7 +1,9 @@
 <template>
-  <div
+  <component
+    :is="element"
     :data-layout="layout"
-    class="k-empty"
+    :type="element === 'button' ? 'button' : false"
+    class="k-empty flex items-stretch rounded-sm"
     v-on="$listeners"
   >
     <k-icon
@@ -9,7 +11,7 @@
       :type="icon"
     />
     <p><slot /></p>
-  </div>
+  </component>
 </template>
 
 <script>
@@ -17,9 +19,17 @@ export default {
   props: {
     text: String,
     icon: String,
+    /**
+     * Available options: `list`|`cards`
+     */
     layout: {
       type: String,
       default: "list"
+    }
+  },
+  computed: {
+    element() {
+      return this.$listeners["click"] !== undefined ? "button" : "div";
     }
   }
 };
@@ -28,22 +38,26 @@ export default {
 <style lang="scss">
 /* global styles */
 .k-empty {
-  display: flex;
-  align-items: stretch;
-  border-radius: $border-radius;
-  color: $color-dark-grey;
+  color: $color-gray-700;
   border: 1px dashed $color-border;
 }
+button.k-empty {
+  width: 100%;
+}
+button.k-empty:focus {
+  outline: none;
+}
 .k-empty p {
-  font-size: $font-size-small;
-  color: $color-dark-grey;
+  font-size: $text-sm;
+  color: $color-gray-700;
 }
 .k-empty > .k-icon {
-  color: $color-light-grey;
+  color: $color-gray-500;
 }
 
-/* layout:cards */
-.k-empty[data-layout="cards"] {
+/* layout:cards & cardlets */
+.k-empty[data-layout="cards"],
+.k-empty[data-layout="cardlets"] {
   text-align: center;
   padding: 1.5rem;
   justify-content: center;

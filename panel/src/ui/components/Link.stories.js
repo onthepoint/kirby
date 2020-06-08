@@ -1,31 +1,20 @@
-import Link from "./Link.vue";
-import { withKnobs, text, boolean } from '@storybook/addon-knobs';
+import Padding from "../../../storybook/theme/Padding.js";
 
 export default {
-  title: "Navigation / Link",
-  decorators: [withKnobs],
-  component: Link
+  title: "UI | Navigation / Link",
+  decorators: [Padding]
 };
 
-export const configurator = () => ({
-  template: '<k-link v-bind="$props">{{ text }}</k-link>',
-  props: {
-    disabled: {
-      default: boolean('disabled', false)
-    },
-    rel: {
-      default: text('rel', 'me')
-    },
-    text: {
-      default: text('text', 'Link text')
-    },
-    title: {
-      default: text('title', 'Appears when you hover over the link')
-    },
-    to: {
-      default: text('to', 'https://getkirby.com')
-    }
-  }
+export const regular = () => ({
+  template: '<k-link to="https://getkirby.com">https://getkirby.com</k-link>',
+});
+
+export const underlined = () => ({
+  template: '<k-link class="underline" to="https://getkirby.com">https://getkirby.com</k-link>'
+});
+
+export const title = () => ({
+  template: '<k-link title="Kirby Website" to="https://getkirby.com">https://getkirby.com</k-link>'
 });
 
 export const disabled = () => ({
@@ -36,8 +25,10 @@ export const withoutURL = () => ({
   template: '<k-link>No href attribute</k-link>',
 });
 
+export const rel = () => ({
+  template: '<k-link rel="me" to="https://getkirby.com">https://getkirby.com</k-link>'
+});
+
 export const targetBlank = () => ({
   template: '<k-link to="https://getkirby.com" target="_blank">Opens in a new tab</k-link>',
 });
-
-

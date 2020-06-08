@@ -1,72 +1,79 @@
-import Header from "./Header.vue";
 import { action } from "@storybook/addon-actions";
-import { withKnobs, text } from '@storybook/addon-knobs';
+import Padding from "../../../storybook/theme/Padding.js";
 
 export default {
-  title: "Layout / Header",
-  decorators: [withKnobs],
-  component: Header,
+  title: "UI | Interaction / Autocomplete",
+  decorators: [Padding]
 };
 
 export const simple = () => ({
-  template: `
-    <k-header>{{ text }}</k-header>
-  `,
-  props: {
-    text: {
-      default: text('text', 'Headline')
-    },
-  }
+  template: `<k-header>Headline</k-header>`
 });
 
 export const editable = () => ({
-  template: `
-    <k-header :editable="true" @edit="edit">{{ text }}</k-header>
-  `,
-  props: {
-    text: {
-      default: text('text', 'Headline')
-    },
-  },
   methods: {
     edit: action('edit')
-  }
+  },
+  template: `
+    <k-header :editable="true" @edit="edit">
+      Headline
+    </k-header>
+  `
 });
 
 export const withOptions = () => ({
   template: `
     <k-header>
-      {{ text }}
-
-      <k-button-group slot="left">
-        <k-button icon="edit">Edit</k-button>
-        <k-button icon="trash">Delete</k-button>
-      </k-button-group>
+      Headline
+      <template v-slot:left>
+        <k-button-group>
+          <k-button icon="edit">Edit</k-button>
+          <k-button icon="trash">Delete</k-button>
+        </k-button-group>
+      </template>
     </k-header>
-  `,
-  props: {
-    text: {
-      default: text('text', 'Headline')
-    },
-  }
+  `
 });
 
 export const bellsAndWhistles = () => ({
   template: `
     <k-header>
-      {{ text }}
+      Headline
+      <template v-slot:left>
+        <k-button-group>
+          <k-button icon="edit">Edit</k-button>
+          <k-button icon="trash">Delete</k-button>
+        </k-button-group>
+      </template>
 
-      <k-button-group slot="left">
-        <k-button icon="edit">Edit</k-button>
-        <k-button icon="trash">Delete</k-button>
-      </k-button-group>
+      <template v-slot:right>
+        <k-prev-next/>
+      </template>
+    </k-header>
+  `
+});
 
-      <k-prev-next slot="right" />
+export const withTabs = () => ({
+  computed: {
+    tabs() {
+      return [
+        { name: "content", label: "Content", icon: "page" },
+        { name: "seo", label: "SEO", icon: "search" }
+      ]
+    }
+  },
+  template: `
+    <k-header :tabs="tabs" :tab="tabs[0]">
+      Headline
+      <template v-slot:left>
+        <k-button-group>
+          <k-button icon="edit">Edit</k-button>
+          <k-button icon="trash">Delete</k-button>
+        </k-button-group>
+      </template>
+      <template v-slot:right>
+        <k-prev-next />
+      </template>
     </k-header>
   `,
-  props: {
-    text: {
-      default: text('text', 'Headline')
-    },
-  }
 });

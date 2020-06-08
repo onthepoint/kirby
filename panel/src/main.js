@@ -1,31 +1,35 @@
-import App from "./App.vue";
-import Filters from "./config/filters.js";
+import App from "@/app/index.js";
+import Api from "@/app/plugins/api.js";
+import Config from "@/app/plugins/config.js";
+import ErrorHandling from "@/app/plugins/errors.js";
+import I18n from "@/app/plugins/i18n.js";
+import Models from "@/app/plugins/models.js";
+import Panel from "@/app/components/Panel.vue";
+import Plugins from "@/app/plugins/plugins.js";
+import Router from "@/app/plugins/router.js";
+import Store from "@/app/store/index.js";
 import Ui from "@/ui/index.js";
 import Vue from "vue";
-import Vuelidate from "vuelidate";
-import I18n from "vuex-i18n";
 
 Vue.config.productionTip = false;
 Vue.config.devtools = true;
 
-import "./config/components.js";
-import "./config/api.js";
-import "./config/errors.js";
-import "./config/libraries.js";
-import "./config/plugins.js";
+import "@/ui/css/index.scss";
 
-import store from "./store/store.js";
-
-Vue.use(I18n.plugin, store);
+Vue.use(Config);
+Vue.use(I18n, Store);
 Vue.use(Ui);
-Vue.use(Filters);
-Vue.use(Vuelidate);
+Vue.use(App);
+Vue.use(ErrorHandling, Store);
+Vue.use(Api, Store);
+Vue.use(Models, Store);
+Vue.use(Plugins, Store);
 
-import router from "./config/router.js";
+import "@/ui/css/utilities.scss";
 
 new Vue({
-  router,
-  store,
+  router: Router(Vue, Store),
+  store: Store,
   created() {
     window.panel.app = this;
 
@@ -35,9 +39,9 @@ new Vue({
     });
 
     // initialize content store
-    this.$store.dispatch("content/init");
+    this.$store.dispatch("content/load");
   },
   render: h => {
-    return h(App);
+    return h(Panel);
   },
 }).$mount("#app");

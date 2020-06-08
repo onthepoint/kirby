@@ -1,0 +1,35 @@
+<template>
+  <k-field
+    :input="_uid"
+    v-bind="$props"
+  >
+    <k-input
+      :id="_uid"
+      ref="input"
+      v-bind="$props"
+      theme="field"
+      type="number"
+      v-on="$listeners"
+    />
+  </k-field>
+</template>
+
+<script>
+import Field from "./Field.vue";
+import Input from "./Input.vue";
+import NumberInput from "./NumberInput.vue";
+
+export default {
+  inheritAttrs: false,
+  props: {
+    ...Field.props,
+    ...Input.props,
+    ...NumberInput.props
+  },
+  methods: {
+    focus() {
+      this.$refs.input.focus();
+    }
+  }
+}
+</script>

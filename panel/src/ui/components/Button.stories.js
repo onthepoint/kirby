@@ -1,75 +1,84 @@
-import Button from "./Button.vue";
 import { action } from "@storybook/addon-actions";
-import { withKnobs, text, boolean, select } from '@storybook/addon-knobs';
+import Padding from "../../../storybook/theme/Padding.js";
 
 export default {
-  title: "Navigation / Button",
-  decorators: [withKnobs],
-  component: Button
+  title: "UI | Navigation / Button",
+  decorators: [Padding]
 };
 
-
-export const configurator = () => ({
-  template: '<k-button v-bind="$props">{{ text }}</k-button>',
-  props: {
-    disabled: {
-      default: boolean('disabled', false)
-    },
-    icon: {
-      default: text('icon', 'edit')
-    },
-    link: {
-      default: text('link', null)
-    },
-    target: {
-      default: text('target', null)
-    },
-    theme: {
-      default: select('theme', ["none", "positive", "negative"])
-    },
-    text: {
-      default: text('text', 'Edit')
-    }
-  },
-});
-
-export const textOnly = () => ({
-  template: '<k-button @click="action">Text Button</k-button>',
+export const onlyText = () => ({
   methods: {
-    action: action('clicked')
-  }
+    action: action('click')
+  },
+  template: '<k-button @click="action">Text Button</k-button>',
 });
 
 export const textAndIcon = () => ({
+  extends: onlyText(),
   template: '<k-button icon="edit" @click="action">Icon & Text</k-button>',
-  methods: {
-    action: action('clicked')
-  }
 });
 
-export const iconOnly = () => ({
-  template: '<k-button icon="edit" />',
-  methods: {
-    action: action('clicked')
-  }
+export const onlyIcon = () => ({
+  extends: onlyText(),
+  template: '<k-button icon="edit" @click="action" />',
+});
+
+export const link = () => ({
+  template: '<k-button icon="url" link="https://getkirby.com">Link</k-button>'
+});
+
+export const positive = () => ({
+  extends: onlyText(),
+  template: `
+    <k-button icon="check" theme="positive" @click="action">
+      Nice one!
+    </k-button>
+  `
+});
+
+export const negative = () => ({
+  extends: onlyText(),
+  template: `
+    <k-button icon="trash" theme="negative" @click="action">
+      Uh oh!
+    </k-button>
+  `
 });
 
 export const disabled = () => ({
-  template: '<k-button :disabled="true" icon="trash" @click="action">Disabled button</k-button>',
-  methods: {
-    action: action('clicked')
-  }
+  extends: onlyText(),
+  template: `
+    <k-button :disabled="true" icon="trash" @click="action">
+      Disabled button
+    </k-button>
+  `
 });
 
-export const group = () => ({
+export const customColor = () => ({
+  extends: onlyText(),
   template: `
-    <k-button-group>
-      <k-button icon="edit" @click="edit">Edit</k-button>
-      <k-button icon="trash" @click="remove">Remove</k-button>
-    </k-button-group>
+    <div>
+      <k-button color="yellow" icon="star" @click="action">
+        Activate sunshine
+      </k-button>
+      <br/><br/>
+      <k-button color="#ff0000" icon="heart" @click="action">
+        Spread love
+      </k-button>
+    </div>
+  `
+});
+
+export const textAsProp = () => ({
+  extends: onlyText(),
+  template: `
+    <k-button text="Text Button" @click="action" />
   `,
-  methods: {
-    edit: action('edit'),
-    remove: action('remove')
-  }
+});
+
+export const textFalse = () => ({
+  extends: onlyText(),
+  template: `
+    <k-button :text="false" @click="action" />
+  `,
 });

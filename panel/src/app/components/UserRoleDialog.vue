@@ -1,0 +1,45 @@
+<script>
+import AsyncFormDialog from "@/ui/components/AsyncFormDialog.vue";
+
+export default {
+  extends: AsyncFormDialog,
+  methods: {
+    async load(id) {
+      const user = await this.$api.users.get(id, {
+        select: ["role"]
+      });
+
+      this.id = id;
+      this.values = {
+        role: user.role.name
+      };
+
+      // load all available roles
+      this.roles = await this.$model.roles.options({ canBe: "changed" });
+
+      // don't let non-admins promote anyone to admin
+      // this will be checked in the backend again, but
+      // it's better to avoid this in the frontend already
+      if (this.$user.role.name !== "admin") {
+        this.roles = this.roles.filter(role => {
+          return role.value !== "admin";
+        });
+      }
+
+      this.fields = {
+        role: {
+          label: this.$t("user.changeRole.select"),
+          type: "radio",
+          required: true,
+          options: this.roles
+        }
+      };
+
+      this.submitButton = this.$t("change");
+    },
+    async submit() {
+      return await this.$model.users.changeRole(this.id, this.values.role);
+    }
+  }
+}
+</script>

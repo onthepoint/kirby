@@ -285,6 +285,7 @@
   "name": "Name",
   "next": "Next",
   "off": "off",
+  "offline": "The Panel is currently offline",
   "on": "on",
   "open": "Open",
   "options": "Options",
@@ -343,7 +344,9 @@
   "role.nobody.title": "Nobody",
 
   "save": "Save",
+
   "search": "Search",
+  "search.empty": "No results found",
 
   "section.required": "The section is required",
 
@@ -376,6 +379,7 @@
   "translation.name": "English",
   "translation.locale": "en_US",
 
+  "untitled": "Untitled",
   "upload": "Upload",
   "upload.error.cantMove": "The uploaded file could not be moved",
   "upload.error.cantWrite": "Failed to write file to disk",

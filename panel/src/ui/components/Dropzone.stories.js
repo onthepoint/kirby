@@ -1,9 +1,9 @@
-import Dropzone from "./Dropzone.vue";
 import { action } from "@storybook/addon-actions";
+import Padding from "../../../storybook/theme/Padding.js";
 
 export default {
-  title: "Interaction / Dropzone",
-  component: Dropzone
+  title: "UI | Interaction / Dropzone",
+  decorators: [Padding]
 };
 
 export const regular = () => ({
@@ -23,5 +23,3 @@ export const disabled = () => ({
     <k-dropzone :disabled="true" @drop="drop">Drop a file here</k-dropzone>
   `
 });
-
-

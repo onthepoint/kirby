@@ -430,47 +430,40 @@ class File extends ModelWithContent
      * Panel icon definition
      *
      * @internal
-     * @param array $params
      * @return array
      */
-    public function panelIcon(array $params = null): array
+    public function panelIcon(): array
     {
-        $colorBlue   = '#81a2be';
-        $colorPurple = '#b294bb';
-        $colorOrange = '#de935f';
-        $colorGreen  = '#a7bd68';
-        $colorAqua   = '#8abeb7';
-        $colorYellow = '#f0c674';
-        $colorRed    = '#d16464';
-        $colorWhite  = '#c5c9c6';
-
         $types = [
-            'image'    => ['color' => $colorOrange, 'type' => 'file-image'],
-            'video'    => ['color' => $colorYellow, 'type' => 'file-video'],
-            'document' => ['color' => $colorRed, 'type' => 'file-document'],
-            'audio'    => ['color' => $colorAqua, 'type' => 'file-audio'],
-            'code'     => ['color' => $colorBlue, 'type' => 'file-code'],
-            'archive'  => ['color' => $colorWhite, 'type' => 'file-zip'],
+            'image'    => ['color' => 'orange-light', 'type' => 'file-image'],
+            'video'    => ['color' => 'yellow-light', 'type' => 'file-video'],
+            'document' => ['color' => 'red-light', 'type' => 'file-document'],
+            'audio'    => ['color' => 'aqua-light', 'type' => 'file-audio'],
+            'code'     => ['color' => 'blue-light', 'type' => 'file-code'],
+            'archive'  => ['type' => 'file-zip'],
         ];
 
         $extensions = [
-            'indd'  => ['color' => $colorPurple],
-            'xls'   => ['color' => $colorGreen, 'type' => 'file-spreadsheet'],
-            'xlsx'  => ['color' => $colorGreen, 'type' => 'file-spreadsheet'],
-            'csv'   => ['color' => $colorGreen, 'type' => 'file-spreadsheet'],
-            'docx'  => ['color' => $colorBlue, 'type' => 'file-word'],
-            'doc'   => ['color' => $colorBlue, 'type' => 'file-word'],
-            'rtf'   => ['color' => $colorBlue, 'type' => 'file-word'],
+            'indd'  => ['color' => 'purple-light'],
+            'xls'   => ['color' => 'green-light', 'type' => 'file-spreadsheet'],
+            'xlsx'  => ['color' => 'green-light', 'type' => 'file-spreadsheet'],
+            'csv'   => ['color' => 'green-light', 'type' => 'file-spreadsheet'],
+            'docx'  => ['color' => 'blue-light', 'type' => 'file-word'],
+            'doc'   => ['color' => 'blue-light', 'type' => 'file-word'],
+            'rtf'   => ['color' => 'blue-light', 'type' => 'file-word'],
             'mdown' => ['type' => 'file-text'],
             'md'    => ['type' => 'file-text']
         ];
 
-        $definition = array_merge($types[$this->type()] ?? [], $extensions[$this->extension()] ?? []);
+        $definition = array_merge(
+            $types[$this->type()] ?? [],
+            $extensions[$this->extension()] ?? []
+        );
 
-        $params['type']  = $definition['type']  ?? 'file';
-        $params['color'] = $definition['color'] ?? $colorWhite;
-
-        return parent::panelIcon($params);
+        return [
+            'type' => $definition['type']  ?? 'file',
+            'color' => $definition['color'] ?? 'gray-light'
+        ];
     }
 
     /**
@@ -480,13 +473,13 @@ class File extends ModelWithContent
      * @param string|null $query
      * @return \Kirby\Cms\File|\Kirby\Cms\Asset|null
      */
-    protected function panelImageSource(string $query = null)
+    protected function panelImage(string $query = null)
     {
         if ($query === null && $this->isViewable()) {
             return $this;
         }
 
-        return parent::panelImageSource($query);
+        return parent::panelImage($query);
     }
 
     /**
@@ -509,8 +502,6 @@ class File extends ModelWithContent
      */
     public function panelPickerData(array $params = []): array
     {
-        $image = $this->panelImage($params['image'] ?? []);
-        $icon  = $this->panelIcon($image);
         $uuid  = $this->id();
 
         if (empty($params['model']) === false) {
@@ -521,11 +512,10 @@ class File extends ModelWithContent
         return [
             'filename' => $this->filename(),
             'dragText' => $this->dragText('auto', $absolute ?? false),
-            'icon'     => $icon,
             'id'       => $this->id(),
-            'image'    => $image,
-            'info'     => $this->toString($params['info'] ?? false),
+            'info'     => $params['info'] ? $this->toString($params['info']) : false,
             'link'     => $this->panelUrl(true),
+            'preview'  => $this->panelPreview($params['preview'] ?? null),
             'text'     => $this->toString($params['text'] ?? '{{ file.filename }}'),
             'type'     => $this->type(),
             'url'      => $this->url(),
