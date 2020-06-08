@@ -11,7 +11,7 @@ export default {
       isReady: false
     },
     title: null,
-    updates: {},
+    update: {},
     version: null
   },
   mutations: {
@@ -40,6 +40,13 @@ export default {
     title(context, title) {
       context.commit("SET", {
         title: title
+      });
+    },
+    update(context, update) {
+      update = update === null ? {} : update;
+
+      context.commit("SET", {
+        update: update
       });
     }
   }
