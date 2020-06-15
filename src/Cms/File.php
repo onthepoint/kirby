@@ -326,14 +326,14 @@ class File extends ModelWithContent
     }
 
     /**
-     * Create a unique media hash
+     * Creates a unique media hash
      *
      * @internal
      * @return string
      */
     public function mediaHash(): string
     {
-        return crc32($this->filename()) . '-' . $this->modifiedFile();
+        return $this->mediaToken() . '-' . $this->modifiedFile();
     }
 
     /**
@@ -345,6 +345,18 @@ class File extends ModelWithContent
     public function mediaRoot(): string
     {
         return $this->parent()->mediaRoot() . '/' . $this->mediaHash() . '/' . $this->filename();
+    }
+
+    /**
+     * Creates a non-guessable token string for this file
+     *
+     * @internal
+     * @return string
+     */
+    public function mediaToken(): string
+    {
+        $token = $this->kirby()->contentToken($this, $this->id());
+        return substr($token, 0, 10);
     }
 
     /**
